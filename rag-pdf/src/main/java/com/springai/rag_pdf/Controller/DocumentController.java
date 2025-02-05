@@ -1,57 +1,31 @@
-//package com.springai.rag_pdf.Controller;
-//
-//import com.springai.rag_pdf.Service.DocumentManagementService;
-//import com.springai.rag_pdf.Service.QuestionAnswerService;
-//import org.springframework.http.ResponseEntity;
-//import org.springframework.web.bind.annotation.*;
-//import org.springframework.web.multipart.MultipartFile;
-//
-//import java.io.IOException;
-//import java.util.List;
-//
-//@RestController
-//@RequestMapping("/api/documents")
-//public class DocumentController {
-//    private final DocumentManagementService documentService;
-//    private final QuestionAnswerService qaService;
-//
-//    public DocumentController(DocumentManagementService documentService, QuestionAnswerService qaService) {
-//        this.documentService = documentService;
-//        this.qaService = qaService;
-//    }
-//
-//    @PostMapping("/upload")
-//    public ResponseEntity<String> uploadDocument(@RequestParam("file") MultipartFile file) {
-//        try {
-//            String documentId = documentService.uploadDocument(file);
-//            return ResponseEntity.ok(documentId);
-//        } catch (IOException e) {
-//            return ResponseEntity.internalServerError().body("Failed to upload document: " + e.getMessage());
-//        }
-//    }
-//
-//    @GetMapping
-//    public ResponseEntity<List<String>> listDocuments() {
-//        return ResponseEntity.ok(documentService.listDocuments());
-//    }
-//
-//    @DeleteMapping("/{documentId}")
-//    public ResponseEntity<Void> deleteDocument(@PathVariable String documentId) {
-//        documentService.deleteDocument(documentId);
-//        return ResponseEntity.ok().build();
-//    }
-//
-//    @PostMapping("/{documentId}/ask")
-//    public ResponseEntity<String> askQuestion(
-//            @PathVariable String documentId,
-//            @RequestParam String question) {
-//        try {
-//            String answer = qaService.askQuestion(documentId, question);
-//            return ResponseEntity.ok(answer);
-//        } catch (IllegalArgumentException e) {
-//            return ResponseEntity.notFound().build();
-//        } catch (Exception e) {
-//            return ResponseEntity.internalServerError().body("Error processing question: " + e.getMessage());
-//        }
-//    }
-//}
+package com.springai.rag_pdf.Controller;
+
+import com.springai.rag_pdf.Service.DocumentService;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Set;
+
+@RestController
+@RequestMapping("/documents")
+public class DocumentController {
+    private final DocumentService documentService;
+
+    public DocumentController(DocumentService documentService) {
+        this.documentService = documentService;
+    }
+
+    @GetMapping("/ids")
+    public ResponseEntity<Set<String>> listDocumentIds() {
+        try {
+            Set<String> documentIds = documentService.getAllDocumentIds();
+            return ResponseEntity.ok(documentIds);
+        } catch (RuntimeException e) {
+            // Fallback to tracked document IDs if retrieval fails
+            Set<String> trackedIds = documentService.getTrackedDocumentIds();
+            return ResponseEntity.ok(trackedIds);
+        }
+    }
+}

@@ -1,10 +1,12 @@
 package com.springai.rag_pdf.Controller;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.ai.chat.ChatClient;
+import org.springframework.ai.chat.prompt.ChatOptions;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.chat.prompt.PromptTemplate;
 import org.springframework.ai.chat.prompt.SystemPromptTemplate;
@@ -44,6 +46,7 @@ public class RagController {
         var userPromptTemplate = new PromptTemplate("{query}");
         var userMessage = userPromptTemplate.createMessage(Map.of("query", query));
         var prompt = new Prompt(List.of(systemMessage, userMessage));
+
         return ResponseEntity.ok(aiClient.call(prompt).getResult().getOutput().getContent());
     }
 }
