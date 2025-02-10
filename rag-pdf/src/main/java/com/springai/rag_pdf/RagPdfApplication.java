@@ -27,6 +27,5 @@ public class RagPdfApplication {
 		VectorStore vectorStore(EmbeddingClient embeddingClient) {
 			return new SimpleVectorStore(embeddingClient);
 		}
-
 	}
 }
