@@ -1,0 +1,3 @@
+[submodule "ui/ui"]
+	path = ui/ui
+	url = https://github.com/Sharu2002/SpringAI-RAG-PDF.git
